@@ -3,6 +3,7 @@ import { createSupabaseMiddlewareClient } from './lib/supabase';
 
 const HOME_PAGE = '/';
 const AUTH_PAGE = '/login';
+const WELCOME_PAGE = '/welcome';
 
 export async function middleware(request: NextRequest) {
   const { pathname } = new URL(request.url);
@@ -18,13 +19,13 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  // ログインしていない場合は、　ログインページを返す
-  if (!user) {
+  // ログインしていない、かつログインページでもウェルカムページでもない場合は、　ログインページを返す
+  if (!user && ![WELCOME_PAGE, AUTH_PAGE].includes(pathname)) {
     return NextResponse.rewrite(new URL(AUTH_PAGE, request.url));
   }
 
-  // ログインしている、かつログインページの場合は、　ホームページを返す
-  if (!!user && AUTH_PAGE === pathname) {
+  // ログインしている、かつログインページまたはウェルカムページの場合は、　ホームページを返す
+  if (!!user && [WELCOME_PAGE, AUTH_PAGE].includes(pathname)) {
     return NextResponse.rewrite(new URL(HOME_PAGE, request.url));
   }
 
