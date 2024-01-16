@@ -21,12 +21,12 @@ export async function middleware(request: NextRequest) {
 
   // ログインしていない、かつログインページでもウェルカムページでもない場合は、　ログインページを返す
   if (!user && ![WELCOME_PAGE, AUTH_PAGE].includes(pathname)) {
-    return NextResponse.rewrite(new URL(AUTH_PAGE, request.url));
+    return NextResponse.redirect(new URL(AUTH_PAGE, request.url));
   }
 
   // ログインしている、かつログインページまたはウェルカムページの場合は、　ホームページを返す
   if (!!user && [WELCOME_PAGE, AUTH_PAGE].includes(pathname)) {
-    return NextResponse.rewrite(new URL(HOME_PAGE, request.url));
+    return NextResponse.redirect(new URL(HOME_PAGE, request.url));
   }
 
   // ログインしている、かつログインページ以外の場合は、リクエスト通りに返す
